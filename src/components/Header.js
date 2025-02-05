@@ -8,7 +8,7 @@ const Header = () => {
       <button className="text-2xl font-bold text-gray-600">☰</button>
 
       {/* Center: Placeholder for logo */}
-      <h1 className="text-lg font-bold text-purple-700">My Finance App</h1>
+      <h1 className="text-lg font-bold text-purple-700">T1cker.com</h1>
 
       {/* Right: Sign-in button (for future use) */}
       <button className="text-gray-600 border border-gray-400 px-3 py-1 rounded">Sign In</button>
