@@ -1,62 +1,48 @@
-import React, { useState } from "react";
-import StockDataFetcher from "./StockDataFetcher";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import KeyMetricsTable from './KeyMetricsTable';
 
-const StockDashboard = () => {
-  const [stockData, setStockData] = useState({
-    realTimeData: null,
-    financials: [],
-  });
+const API_KEY = 'UwbsK5XWR0U2yaV0732fg2MSGz8bHBR'; // Replace with your FMP API key
 
-  return (
-    <div className="max-w-6xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">Stock Dashboard</h1>
-      <StockDataFetcher onDataFetched={setStockData} />
-
-      {stockData.realTimeData && (
-        <div className="mt-6">
-          {/* Stock Overview */}
-          <div className="bg-white shadow-md rounded-lg p-6">
-            <h2 className="text-xl font-bold">
-              {stockData.realTimeData.name} ({stockData.realTimeData.symbol})
-            </h2>
-            <p className="text-lg">
-              Price: <span className="font-semibold">${stockData.realTimeData.price}</span>
-            </p>
-            <p className={`text-lg ${stockData.realTimeData.change < 0 ? "text-red-500" : "text-green-500"}`}>
-              {stockData.realTimeData.change} ({stockData.realTimeData.changesPercentage}%)
-            </p>
-          </div>
-
-          {/* Financial Metrics Table */}
-          {stockData.financials.length > 0 && (
-            <div className="overflow-x-auto mt-6">
-              <h2 className="text-xl font-bold">Financial Metrics</h2>
-              <table className="min-w-full table-auto border-collapse border border-gray-300">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border px-4 py-2">Year</th>
-                    <th className="border px-4 py-2">Revenue</th>
-                    <th className="border px-4 py-2">Net Income</th>
-                    <th className="border px-4 py-2">EPS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stockData.financials.slice(0, 5).map((year) => (
-                    <tr key={year.date} className="hover:bg-gray-100">
-                      <td className="border px-4 py-2">{year.date}</td>
-                      <td className="border px-4 py-2">${year.revenue?.toLocaleString() || "N/A"}</td>
-                      <td className="border px-4 py-2">${year.netIncome?.toLocaleString() || "N/A"}</td>
-                      <td className="border px-4 py-2">{year.eps || "N/A"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
+const fetchStockData = async (ticker) => {
+  try {
+    const response = await axios.get(
+      `https://financialmodelingprep.com/api/v3/quote/${ticker}?apikey=${API_KEY}`
+    );
+    return response.data[0];
+  } catch (error) {
+    console.error('Error fetching stock data:', error);
+    return null;
+  }
 };
 
-export default StockDashboard;
+const fetchKeyMetrics = async (ticker) => {
+  try {
+    const response = await axios.get(
+      `https://financialmodelingprep.com/api/v3/key-metrics/${ticker}?apikey=${API_KEY}`
+    );
+    return response.data[0];
+  } catch (error) {
+    console.error('Error fetching key metrics:', error);
+    return null;
+  }
+};
+
+const StockDashboard = ({ ticker }) => {
+  const [stock, setStock] = useState(null);
+  const [keyMetrics, setKeyMetrics] = useState(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const stockData = await fetchStockData(ticker);
+      setStock(stockData);
+
+      const metricsData = await fetchKeyMetrics(ticker);
+      setKeyMetrics(metricsData);
+    };
+    loadData();
+  }, [ticker]); // Re-run when ticker changes
+
+  if (!stock) return <div>Loading...</div>;
+
+  return

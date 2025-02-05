@@ -1,21 +1,20 @@
-import React, { useState } from "react";
-import Header from "./components/Header";
-import SearchBar from "./components/SearchBar";
-import StickyMenu from "./components/StickyMenu";
-import StockChart from "./components/StockChart";
-import KeyMetricsTable from "./components/KeyMetricsTable";
+import React, { useState } from 'react';
+import Navbar from './components/Navbar';
+import SearchBar from './components/SearchBar';
+import StockDashboard from './components/StockDashboard';
 
 function App() {
-  const [selectedSection, setSelectedSection] = useState("Summary");
+  const [ticker, setTicker] = useState('AAPL'); // Default ticker
+
+  const handleSearch = (newTicker) => {
+    setTicker(newTicker);
+  };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <Header />
-      <SearchBar onSearch={(ticker) => console.log("Fetching data for:", ticker)} />
-      <StickyMenu onSectionSelect={setSelectedSection} />
-      
-      {selectedSection === "Summary" && <StockChart />}
-      {selectedSection === "Financials" && <KeyMetricsTable />}
+    <div className="App">
+      <Navbar />
+      <SearchBar onSearch={handleSearch} />
+      <StockDashboard ticker={ticker} />
     </div>
   );
 }
