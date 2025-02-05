@@ -65,7 +65,7 @@ const StockDataFetcher = () => {
       {/* Financial Data Table */}
       {financialData && (
         <div className="overflow-x-auto">
-          <h2 className="text-xl font-bold mb-2">Financial Data</h2>
+          <h2 className="text-xl font-bold mb-2">TEST TABLE FINANCIALS</h2>
           <table className="min-w-full table-auto border-collapse border border-gray-300">
             <thead>
               <tr className="bg-gray-100">
