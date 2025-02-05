@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const API_KEY = "YOUR_FMP_API_KEY"; // Replace with your actual FMP API Key
+const API_KEY = "PV6zVVsJ05kwSUntS591jaobl7SSadUf"; // Your FMP API Key
 
 const StockDataFetcher = ({ onDataFetched }) => {
   const [ticker, setTicker] = useState("");
@@ -14,33 +14,34 @@ const StockDataFetcher = ({ onDataFetched }) => {
       return;
     }
 
+    console.log(`Fetching data for: ${ticker}`);
     setLoading(true);
     setError(null);
 
     try {
+      onDataFetched({ realTimeData: null, financials: [], historicalData: [] });
+
       // Fetch real-time stock data
       const realTimeRes = await axios.get(
         `https://financialmodelingprep.com/api/v3/quote/${ticker}?apikey=${API_KEY}`
       );
+      console.log("Real-Time Data:", realTimeRes.data);
 
-      // Fetch financial metrics (Annual)
+      // Fetch financial statements (Income Statement - Annual)
       const financialsRes = await axios.get(
         `https://financialmodelingprep.com/api/v3/income-statement/${ticker}?period=annual&apikey=${API_KEY}`
       );
+      console.log("Financials Data:", financialsRes.data);
 
-      // Fetch historical price data (30 days)
-      const historicalRes = await axios.get(
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${ticker}?timeseries=30&apikey=${API_KEY}`
-      );
-
+      // Ensure correct data format before updating state
       onDataFetched({
-        realTimeData: realTimeRes.data[0] || null,
-        financials: financialsRes.data || [],
-        historicalData: historicalRes.data.historical || [],
+        realTimeData: realTimeRes.data.length > 0 ? realTimeRes.data[0] : null,
+        financials: financialsRes.data.length > 0 ? financialsRes.data : [],
       });
 
       setLoading(false);
     } catch (err) {
+      console.error("Error fetching stock data:", err);
       setError("Failed to fetch stock data. Please try again.");
       setLoading(false);
     }
