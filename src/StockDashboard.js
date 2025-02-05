@@ -87,4 +87,4 @@ const StockDashboard = () => {
   );
 };
 
-ex
+export default StockDashboard;
